@@ -1,27 +1,10 @@
-import "./style.css"
+//Selecting DOM elements
+const btn = document.querySelector(".btn-open");
+const form = document.querySelector(".fact-form");
+const factList = document.querySelector(".facts-list");
 
-function App() {
-  const appTitle = "This is a Fact application!!!";
-  return (
-       <>
-        <header className="header">
-            <div className="logo">
-                <img src="facts-img.jpg" height="68" width="68" />
-                <h1>{appTitle}</h1>
-            </div>
-            <button className="btn btn-large btn-open">Share A Fact</button>
-        </header>
-
-        <NewFactForm />
-
-      <main className="main">
-            <CategoryFilter />
-            <FactList />
-      </main>
-    </>
-  );
-}
-
+//Creating DOM Elements: Render facts List
+/*
 const initialFacts = [
     {
         id : 1,
@@ -53,7 +36,9 @@ const initialFacts = [
         voteFalse: 0,
         createdIn: 2014
     }
-];
+]
+//createFactsList(initialFacts);
+*/
 
 const CATEGORIES = [
     {name: "technology" , color: "#3b82f6"},
@@ -65,40 +50,50 @@ const CATEGORIES = [
     {name: "sports" , color: "#8b5cf6"}
 ];
 
+factList.innerHTML = "";
 
-function NewFactForm() {
-  return <form className="fact-form">New Fact Form</form>;
-}
+function createFactsList(dataArr){
 
-function CategoryFilter () {
-  return <aside>Category Filter</aside>;
-}
-
-function FactList() {
-  const facts = initialFacts;
-  return <section><ul className="facts-list">{
-    facts.map((fact)=> (
-      <Fact key={fact.id} fact = {fact} />
-    ))
-  }</ul></section>;
-}
-
-function Fact({fact}) {
-  return <li  className="fact">
-                    <p>
-                        {fact.text}
-                        <a className="source"
-                            href={fact.source}
+    const htmlArr = dataArr.map((fact)=> `<li class="fact">
+                     <p>
+                        ${fact.fact}
+                        <a class="source"
+                            href=${fact.source}
                             target="_blank">(Source)</a>
 
                     </p>
-                    <span className="tag" style={{backgroundColor: CATEGORIES.find((cat)=> cat.name === fact.category).color,}}>{fact.category}</span>
-                    <div className="vote-buttons">
-                        
-                        <button>👍 {fact.votesInterseting}</button>
-                        <button>😽 {fact.votesMindblowing}</button>
-                        <button>⛔️ {fact.voteFalse}</button>
-                    </div>
-                </li>;
+                    <span class="tag" style="background-color: ${CATEGORIES.find((cat)=> cat.name === fact.category).color}">${fact.category}</span>
+</li>`);
+const html = htmlArr.join("");
+factList.insertAdjacentHTML("afterbegin", html);
+};
+
+
+loadFacts();
+
+async function loadFacts(){
+
+    const resp = await fetch("https://lxgudonoyyetwytdpxhe.supabase.co/rest/v1/facts?select=*", {
+    headers : {
+        apikey : "<apikey>",
+        authorization : "Bearer <token>",
+    },
+});
+const data = await resp.json();
+console.log(data);
+createFactsList(data);
 }
-export default App;
+
+//Toggle Visibility
+//EventHandler
+btn.addEventListener('click', function(){
+    if(form.classList.contains("hidden")){
+        form.classList.remove("hidden");
+        btn.textContent="Close";
+    }else{
+        form.classList.add("hidden");
+        btn.textContent="Share A Fact";
+    }
+}) 
+
+//console.dir(btn);
