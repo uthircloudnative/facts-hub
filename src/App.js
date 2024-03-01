@@ -1,18 +1,18 @@
+import { useState } from "react";
 import "./style.css"
 
 function App() {
-  const appTitle = "This is a Fact application!!!";
+  {/* State varibale to control form display */}
+  const [showForm, setShowForm] = useState(false);
+
+  
   return (
        <>
-        <header className="header">
-            <div className="logo">
-                <img src="facts-img.jpg" height="68" width="68" />
-                <h1>{appTitle}</h1>
-            </div>
-            <button className="btn btn-large btn-open">Share A Fact</button>
-        </header>
+        
+        <Header showForm={showForm} setShowForm={setShowForm} />
 
-        <NewFactForm />
+        {/* User state variable */}
+        {showForm ? <NewFactForm /> : null}
 
       <main className="main">
             <CategoryFilter />
@@ -20,6 +20,18 @@ function App() {
       </main>
     </>
   );
+}
+
+function Header({showForm, setShowForm}){
+  const appTitle = "This is a Fact application!!!";
+
+  return <header className="header">
+            <div className="logo">
+                <img src="facts-img.jpg" height="68" width="68" />
+                <h1>{appTitle}</h1>
+            </div>
+            <button className="btn btn-large btn-open" onClick={() => setShowForm((show)=> !show)}>{!showForm ? 'Close' : 'Share A Fact'}</button>
+        </header>;
 }
 
 const initialFacts = [
@@ -71,7 +83,17 @@ function NewFactForm() {
 }
 
 function CategoryFilter () {
-  return <aside>Category Filter</aside>;
+  return <aside>
+            <ul>
+                 <li className="category"><button className=" btn btn-all-categories">All</button></li>
+            </ul>
+            <ul>
+               {CATEGORIES.map((cat) => (
+                    <li key={cat.name} className="category"><button className="btn btn-category" style={{backgroundColor: cat.color}}>
+                            {cat.name}</button></li>
+               ))}
+            </ul>
+          </aside>;
 }
 
 function FactList() {
